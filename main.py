@@ -1,5 +1,5 @@
 #This file will need to use the DataManager,FlightSearch, FlightData, NotificationManager classes to achieve the program requirements.
-
+import flight_search
 import data_manager
 
 data_manager = data_manager.DataManager()
@@ -63,7 +63,13 @@ sheet_data = [
       "id": 10
     }
   ]
-
+row_id = 2
 for dict in sheet_data:
-    if dict["iataCode"] == None or dict["iataCode"] == "":
-        print("empty")
+    if dict["iataCode"] is None or dict["iataCode"] == "":
+        dict["iataCode"] = flight_search.get_iata_code(dict["city"])
+        data_manager.put_iata_code("Test", row_id)
+    row_id += 1
+
+
+#print(sheet_data)
+
