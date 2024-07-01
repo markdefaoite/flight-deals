@@ -67,7 +67,7 @@ row_id = 2
 for dict in sheet_data:
     if dict["iataCode"] is None or dict["iataCode"] == "":
         dict["iataCode"] = flight_search.get_iata_code(dict["city"])
-        data_manager.put_iata_code("Test", row_id)
+        data_manager.update_destination_codes("Test", row_id)
     row_id += 1
 
 
