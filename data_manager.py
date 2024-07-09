@@ -7,8 +7,8 @@ POST_SHEETY = os.getenv("POST_SHEETY")
 
 class DataManager:
     def __init__(self):
-        self._user = os.getenv["username"]
-        self._password = os.getenv["password"]
+        self._user = os.getenv("username")
+        self._password = os.getenv("password")
         self._authorization = HTTPBasicAuth(self._user, self._password)
         self.destination_data = {}
 
@@ -25,11 +25,16 @@ class DataManager:
         response = requests.get(POST_SHEETY)
         return response.json()["prices"]
 
-    def update_destination_codes(self, iata_code, row_id):
-        params = {
-            "price": {
-                "iataCode": iata_code,
+    def update_destination_codes(self):
+        for city in self.destination_data:
+            new_data = {
+                "price": {
+                    "iataCode": city["iataCode"]
+                }
             }
-        }
-        response = requests.put(url=f"{POST_SHEETY}/{row_id}", json=params)
+            response = requests.put(
+                url=f"{POST_SHEETY}/{city['id']}",
+                json=new_data
+            )
+            print(response.text)
 

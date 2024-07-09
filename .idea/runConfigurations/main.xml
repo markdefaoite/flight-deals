@@ -6,10 +6,12 @@
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="AUTHORIZATION" value="Basic ZXdydHl3dHk6NDU2MXZmZGFycWdld2chIqM=" />
+      <env name="password" value="4561vfdarqgewg!&quot;£" />
       <env name="POST_SHEETY" value="https://api.sheety.co/7089274e21f47622530dd4c143cf9f22/flightDeals/prices" />
       <env name="PYTHONUNBUFFERED" value="1" />
       <env name="username" value="ewrtywty" />
-      <env name="password" value="4561vfdarqgewg!&quot;£" />
+      <env name="amadeus_api_key" value="St2c3pNy0hxLNp8ec7CdCl3aXMLd8gNC" />
+      <env name="amadeus_secret" value="WEBhMjJzDN1ruYGh" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
