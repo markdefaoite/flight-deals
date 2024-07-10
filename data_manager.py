@@ -38,3 +38,4 @@ class DataManager:
             )
             print(response.text)
 
+

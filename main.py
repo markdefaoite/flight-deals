@@ -1,89 +1,48 @@
 #This file will need to use the DataManager,FlightSearch, FlightData, NotificationManager classes to achieve the program requirements.
 import time
+from datetime import datetime, timedelta
+from data_manager import DataManager
+from flight_search import FlightSearch
+from flight_data import find_cheapest_flight
 
-import flight_search
-import data_manager
+# ==================== Set up the Flight Search ====================
 
-data_manager = data_manager.DataManager()
+data_manager = DataManager()
+sheet_data = data_manager.get_destination_data()
+flight_search = FlightSearch()
 
-sheet_data = data_manager.get_prices()
+# Set your origin airport
+ORIGIN_CITY_IATA = "JFK"
 
-# Hardcoding response from Sheety's API for the time being for testing purposes
 
-# sheet_data = [
-#     {
-#       "city": "Paris",
-#       "iataCode": "",
-#       "lowestPrice": 54,
-#       "id": 2
-#     },
-#     {
-#       "city": "Frankfurt",
-#       "iataCode": "",
-#       "lowestPrice": 42,
-#       "id": 3
-#     },
-#     {
-#       "city": "Tokyo",
-#       "iataCode": "",
-#       "lowestPrice": 485,
-#       "id": 4
-#     },
-#     {
-#       "city": "Hong Kong",
-#       "iataCode": "",
-#       "lowestPrice": 551,
-#       "id": 5
-#     },
-#     {
-#       "city": "Istanbul",
-#       "iataCode": "",
-#       "lowestPrice": 95,
-#       "id": 6
-#     },
-#     {
-#       "city": "Kuala Lumpur",
-#       "iataCode": "",
-#       "lowestPrice": 414,
-#       "id": 7
-#     },
-#     {
-#       "city": "New York",
-#       "iataCode": "",
-#       "lowestPrice": 240,
-#       "id": 8
-#     },
-#     {
-#       "city": "San Francisco",
-#       "iataCode": "",
-#       "lowestPrice": 260,
-#       "id": 9
-#     },
-#     {
-#       "city": "Dublin",
-#       "iataCode": "",
-#       "lowestPrice": 378,
-#       "id": 10
-#     }
-#   ]
-# row_id = 2
-# for dict in sheet_data:
-#     if dict["iataCode"] is None or dict["iataCode"] == "":
-#         dict["iataCode"] = flight_search.get_iata_code(dict["city"])
-#         data_manager.update_destination_codes("Test", row_id)
-#     row_id += 1
-#
-
-#print(sheet_data)
-
-fs = flight_search.FlightSearch()
+# ==================== Update the Airport Codes in Google Sheet ====================
 
 for row in sheet_data:
     if row["iataCode"] == "":
-        row["iataCode"] = fs.get_iata_code(row["city"])
+        row["iataCode"] = flight_search.get_destination_code(row["city"])
         # slowing down requests to avoid rate limit
         time.sleep(2)
 print(f"sheet_data:\n {sheet_data}")
 
 data_manager.destination_data = sheet_data
 data_manager.update_destination_codes()
+
+# ==================== Search for Flights ====================
+
+tomorrow = datetime.now() + timedelta(days=1)
+six_month_from_today = datetime.now() + timedelta(days=(6 * 30))
+
+for destination in sheet_data:
+    print(f"Getting flights for {destination['city']}...")
+    flights = flight_search.check_flights(
+        ORIGIN_CITY_IATA,
+        destination["iataCode"],
+        from_time=tomorrow,
+        to_time=six_month_from_today
+    )
+    cheapest_flight = find_cheapest_flight(flights)
+    print(f"{destination['city']}: £{cheapest_flight.price}")
+    # Slowing down requests to avoid rate limit
+    time.sleep(2)
+
+
